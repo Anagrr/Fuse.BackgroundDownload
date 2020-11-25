@@ -1,0 +1,8 @@
+<StackPanel ux:Class="LoadingIndicator" Value="0.25" ItemSpacing="5">
+    <double ux:Property="Value"/>
+
+    <Text Value="Loading ... " TextWrapping="Wrap"/>
+    <Panel Color="#eee" Height="35">
+        <Panel Alignment="Left" Color="#2586EC" Width="{ReadProperty Value}%"/>
+    </Panel>
+</StackPanel>

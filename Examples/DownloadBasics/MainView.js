@@ -3,48 +3,63 @@ var Downloader = require("FuseJS/BackgroundDownload");
 
 var lastDownloadID = -1;
 var info = Observable("");
+var progressPercents = Observable(0);
 
 var startDownload = function() {
-    console.log("Starting");
-    lastDownloadID = Downloader.start("http://download.thinkbroadband.com/20MB.zip");
-    console.log("Started " + lastDownloadID);
+    lastDownloadID = Downloader.start("https://www.setaswall.com/wp-content/uploads/2017/03/Artistic-Landscape-4K-Wallpaper-3840x2160.jpg");
 };
 
 var stopDownload = function() {
-    console.log("stop called: " + lastDownloadID);
     Downloader.stop(lastDownloadID);
 };
 
 var pauseDownload = function() {
-    console.log("pause called: " + lastDownloadID);
     Downloader.pause(lastDownloadID);
 };
 
 var resumeDownload = function() {
-    console.log("resume called: " + lastDownloadID);
     lastDownloadID = Downloader.resume(lastDownloadID);
 };
 
-Downloader.on("progress", function(downloadID, bytesSoFar, totalBytesExpected) {
-    console.log("Rock on " + downloadID + ": " + bytesSoFar/totalBytesExpected);
-});
+var onProgressChanged = function(downloadID, bytesSoFar, totalBytesExpected) {
+    progressPercents.value = Math.ceil(bytesSoFar * 100 / totalBytesExpected);
+};
 
-Downloader.on("paused", function(kind, downloadID) {
+var onFailed = function(downloadID, errorMessage) {
+    progressPercents.value = 0;
+    info.value = "failure :( - " + downloadID + ": " + errorMessage;
+};
+
+var onPaused = function(kind, downloadID) {
     console.log(kind + " - " + downloadID);
-});
+};
 
-Downloader.on("succeeded", function(downloadID, finalPath) {
+var onDownloaded = function(downloadID, finalPath) {
+    progressPercents.value = 0;
     console.log("success! - " + downloadID + ": " + finalPath);
-});
+};
 
-Downloader.on("failed", function(downloadID, errorMessage) {
-    console.log("failure :( - " + downloadID + ": " + errorMessage);
-});
+var subscribe = function() {
+    Downloader.on("succeeded", onDownloaded);
+    Downloader.on("progress", onProgressChanged);
+    Downloader.on("failed", onFailed);
+    Downloader.on("paused", onPaused);
+};
+
+var unsubscribe = function() {
+    Downloader.removeListener("succeeded", onDownloaded);
+    Downloader.removeListener("progress", onProgressChanged);
+    Downloader.removeListener("failed", onFailed);
+    Downloader.removeListener("paused", onPaused);
+};
 
 module.exports = {
-    startDownload: startDownload,
-    stopDownload: stopDownload,
-    pauseDownload: pauseDownload,
-    resumeDownload: resumeDownload,
-    info: info
+    startDownload,
+    stopDownload,
+    pauseDownload,
+    resumeDownload,
+    subscribe,
+    unsubscribe,
+    info,
+    progressPercents
 };

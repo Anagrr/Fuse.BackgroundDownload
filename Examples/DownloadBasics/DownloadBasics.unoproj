@@ -2,7 +2,10 @@
   "Packages": [
     "Fuse",
     "FuseJS",
-    "Fuse.BasicTheme"
+    "Fuse.BasicTheme",
+    "Fuse.ImageTools",
+    "Fuse.CameraRoll",
+    "Fuse.Controls.CameraView",
   ],
   "Android": {
     "AllowBackup" : true

@@ -1,22 +1,89 @@
 <App Background="#2586EC">
-	<DockPanel>
-		<JavaScript File="MainView.js"/>
+	<DockPanel Padding="0, 0, 0, 10">
 		<StackPanel Dock="Top" Background="#2586EC">
 			<StatusBarBackground/>
-			<Fuse.iOS.StatusBarConfig Style="Light"/>
+			<iOS.StatusBarConfig Style="Light"/>
 		</StackPanel>
 		<BottomBarBackground Dock="Bottom" />
 
-		<StackPanel Width="90%" Height="90%" Padding="20">
+		<Container ux:Class="Display" Width="90%"  Subtree="inner">
 			<Rectangle Layer="Background" CornerRadius="10" Color="#fff"/>
-			<Text Value="Download Test" Alignment="Center" FontSize="35" TextColor="#2586EC"/>
+			<StackPanel Padding="20"  ux:Name="inner" ux:Binding="Children" ItemSpacing="15"/>
+		</Container>
+		
+		<Text ux:Class="Header" Value="Download" Alignment="Center" FontSize="35" TextColor="#2586EC"/>
+		<Text ux:Class="Info" FontSize="13" TextWrapping="Wrap"/>
 
-			<Basic.Button Text="Start Download" Clicked="{startDownload}" />
-			<Basic.Button Text="Stop Download" Clicked="{stopDownload}" />
-			<Basic.Button Text="Pause Download" Clicked="{pauseDownload}" />
-			<Basic.Button Text="Resume Download" Clicked="{resumeDownload}" />
+		<PageControl Padding="0, 30">
+			<Page>
+				<JavaScript File="MainView.js"/>
+				<Activated Handler="{subscribe}"/>
+				<Deactivated Handler="{unsubscribe}"/>
+				<Display>
+					<Header Value="Functions Demo"/>
+					
+					<WhileTrue Value="{progressPercents > 0}">
+						<LoadingIndicator Value="{progressPercents}"/>
+					</WhileTrue>
 
-			<TextView Value="{info}" Height="200" TextWrapping="Wrap"/>
-		</StackPanel>
+					<Basic.Button Text="Start Download" Clicked="{startDownload}" />
+					<Basic.Button Text="Stop Download" Clicked="{stopDownload}" />
+					<Basic.Button Text="Pause Download" Clicked="{pauseDownload}" />
+					<Basic.Button Text="Resume Download" Clicked="{resumeDownload}" />
+			
+					<Info Value="{info}"/>
+				</Display>
+			</Page>
+
+			<Page>
+				<JavaScript File="ImageTest.js"/>
+				<Activated Handler="{subscribe}"/>
+				<Deactivated Handler="{unsubscribe}"/>
+				<Display>	
+					<Header Value="Image Demo"/>
+					<Basic.Button Text="Start download" Clicked="{downloadImage}" />
+					<Info Value="{info}"/>
+					
+					<WhileTrue Value="{progressPercents > 0}">
+						<LoadingIndicator Value="{progressPercents}"/>
+					</WhileTrue>
+					
+					<WhileTrue Value="{image.path != ''}">
+						<Image File="{image.path}" Size="100%, 200"/>
+						<Basic.Button Text="Save to CameraRoll" Clicked="{saveToCameraRoll}" />
+					</WhileTrue>
+				</Display>
+			</Page>
+
+			<Page>
+				<JavaScript File="VideoTest.js"/>
+				<Activated Handler="{subscribe}"/>
+				<Deactivated Handler="{unsubscribe}"/>
+				<Display>					
+					<Header Value="Video Demo"/>
+					<Basic.Button Text="Start download" Clicked="{downloadVideo}" />
+					<Info Value="{info}"/>
+					
+					<WhileTrue Value="{progressPercents > 0}">
+						<LoadingIndicator Value="{progressPercents}"/>
+					</WhileTrue>
+					
+					<Video ux:Name="video" Size="100%, 200"/>
+					
+					<WhileTrue Value="{videoSource != ''}">
+						<Basic.Button Text="Play">
+							<Clicked>
+								<Set video.File="{videoSource}"/>
+								<Play Target="video"/>
+							</Clicked>
+						</Basic.Button>
+						<Basic.Button Text="Save to CameraRoll" Clicked="{saveToCameraRoll}" />
+					</WhileTrue>
+				</Display>
+			</Page>
+		</PageControl>
+
+		<Text Dock="Bottom" Value="Swipe left / right to see other demos" Layer="Overlay" Alignment="Bottom" TextAlignment="Center" Color="White"/>
+		
 	</DockPanel>
 </App>
