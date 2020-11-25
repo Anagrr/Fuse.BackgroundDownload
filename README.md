@@ -102,6 +102,11 @@ Downloader.on("failed", function(kind, downloadID, errorMessage) {
 });
 ```
 
+### Critical Note
+
+Downloader is SINGLETON! This means that it has only one instance per application. So the best way to work with Downloader's events is make subscriptions per unit(like Page), and sibscribe when you visit the page and unsubscribe on leave. Or another way subscribe before call the `Downloader.start()` and unsubscribe in the end of  `success` or `failed` callbacks.
+These techhnics allow you to avoid undesired firing of the event handlers. First of these two approaches you can see in the example of usage.
+
 ## That's all folks
 
 I hope people find this library useful. It's an open source project under the MIT license and pull requests are very welcome.
